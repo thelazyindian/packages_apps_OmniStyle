@@ -84,6 +84,7 @@ http://square.github.io/picasso/
 ## Contributors ##
 + JP Kenji
 + PartimusPrime
++ Davide Di Battista
 
 ## Contributing wallpapers ##
 Put images files into drawable-nodpi

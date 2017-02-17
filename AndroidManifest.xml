@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <application
         android:allowBackup="false"
         android:label="OmniStyle"
-        android:icon="@drawable/omnirom_logo" >
+        android:icon="@drawable/citrus_logo" >
         <activity
             android:name=".BrowseHeaderActivity"
             android:label="@string/browse_header"
@@ -101,16 +101,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <activity
             android:name=".wavvy"
             android:label="Wavvy" >
-            <intent-filter>
-                <action android:name="org.omnirom.DaylightHeaderPack1" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".omni_syed"
-            android:label="Syed" >
             <intent-filter>
                 <action android:name="org.omnirom.DaylightHeaderPack1" />
 
