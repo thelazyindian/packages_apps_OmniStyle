@@ -82,7 +82,6 @@ public class BrowseWallsActivity extends Activity {
     private static final String WALLPAPER_LIST_URI = "https://raw.githubusercontent.com/Citrus-CAF/wallpapers/master/thumbs/json_wallpapers";
     private static final String WALLPAPER_THUMB_URI = "https://raw.githubusercontent.com/Citrus-CAF/wallpapers/master/thumbs/";
     private static final String WALLPAPER_FULL_URI = "https://raw.githubusercontent.com/Citrus-CAF/wallpapers/master/";
-
     private static final boolean DEBUG = false;
     private List<WallpaperInfo> mWallpaperList;
     private List<RemoteWallpaperInfo> mWallpaperUrlList;
@@ -97,6 +96,7 @@ public class BrowseWallsActivity extends Activity {
     private int mCurrentLocation;
     private TextView mNoNetworkMessage;
     private ProgressBar mProgressBar;
+    private String mWallpaperDisplayDefault;
 
     private static final int HTTP_READ_TIMEOUT = 30000;
     private static final int HTTP_CONNECTION_TIMEOUT = 30000;
@@ -105,12 +105,15 @@ public class BrowseWallsActivity extends Activity {
     private class WallpaperInfo {
         public String mImage;
         public String mCreator;
+        public String mDisplayName;
     }
 
     private class RemoteWallpaperInfo {
         public String mImage;
         public String mUri;
         public String mThumbUri;
+        public String mCreator;
+        public String mDisplayName;
     }
 
     public class WallpaperListAdapter extends ArrayAdapter<WallpaperInfo> {
@@ -138,7 +141,7 @@ public class BrowseWallsActivity extends Activity {
                 holder.mWallpaperImage.setImageDrawable(null);
             }
 
-            holder.mWallpaperName.setText(wi.mImage);
+            holder.mWallpaperName.setText(TextUtils.isEmpty(wi.mDisplayName) ? mWallpaperDisplayDefault + " " + (position + 1) : wi.mDisplayName);
             holder.mWallpaperCreator.setVisibility(TextUtils.isEmpty(wi.mCreator) ? View.GONE : View.VISIBLE);
             holder.mWallpaperCreator.setText(wi.mCreator);
 
@@ -162,9 +165,9 @@ public class BrowseWallsActivity extends Activity {
 
             Picasso.with(BrowseWallsActivity.this).load(wi.mThumbUri).into(holder.mWallpaperImage);
 
-            holder.mWallpaperName.setText(wi.mImage);
-            //holder.mWallpaperCreator.setVisibility(TextUtils.isEmpty(wi.mCreator) ? View.GONE : View.VISIBLE);
-            //holder.mWallpaperCreator.setText(wi.mCreator);
+            holder.mWallpaperName.setText(TextUtils.isEmpty(wi.mDisplayName) ? mWallpaperDisplayDefault + " " + (position + 1) : wi.mDisplayName);
+            holder.mWallpaperCreator.setVisibility(TextUtils.isEmpty(wi.mCreator) ? View.GONE : View.VISIBLE);
+            holder.mWallpaperCreator.setText(wi.mCreator);
             return convertView;
         }
     }
@@ -197,6 +200,7 @@ public class BrowseWallsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_wallpapers);
+        mWallpaperDisplayDefault = getResources().getString(R.string.wallpaper_default_name);
         mPackageName = getClass().getPackage().getName();
         getActionBar().setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 
@@ -324,9 +328,11 @@ public class BrowseWallsActivity extends Activity {
                 String image = parser.getAttributeValue(null, "image");
                 if (image != null) {
                     String creator = parser.getAttributeValue(null, "creator");
+                    String displayName = parser.getAttributeValue(null, "name");
                     WallpaperInfo wi = new WallpaperInfo();
                     wi.mImage = image;
                     wi.mCreator = creator;
+                    wi.mDisplayName = displayName;
                     if (DEBUG)
                         Log.i(TAG, "add wallpaper " + image + " " + mRes.getIdentifier(image, "drawable", mPackageName));
                     mWallpaperList.add(wi);
@@ -453,6 +459,14 @@ public class BrowseWallsActivity extends Activity {
             for (int i = 0; i < walls.length(); i++) {
                 JSONObject build = walls.getJSONObject(i);
                 String fileName = build.getString("filename");
+                String creator = null;
+                if (build.has("creator")) {
+                    creator = build.getString("creator");
+                }
+                String displayName = null;
+                if (build.has("name")) {
+                    displayName = build.getString("name");
+                }
                 if (fileName.lastIndexOf(".") != -1) {
                     String ext = fileName.substring(fileName.lastIndexOf("."));
                     if (ext.equals(".png") || ext.equals(".jpg")) {
@@ -460,6 +474,8 @@ public class BrowseWallsActivity extends Activity {
                         wi.mImage = fileName;
                         wi.mThumbUri = WALLPAPER_THUMB_URI + fileName;
                         wi.mUri = WALLPAPER_FULL_URI + fileName;
+                        wi.mCreator = creator;
+                        wi.mDisplayName = displayName;
                         urlList.add(wi);
                         if (DEBUG) Log.d(TAG, "add remote wallpaper = " + wi.mUri);
                     }
