@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-<!--        <activity
+        <activity
             android:name=".BrowseWallsActivity"
             android:label="@string/browse_walls"
             android:theme="@android:style/Theme.Material.Settings"
@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <action android:name="android.intent.action.SET_WALLPAPER" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity-alias> -->
+        </activity-alias>
         <activity
             android:name=".weather_color"
             android:label="LockClock (color)" >
