@@ -79,9 +79,9 @@ public class BrowseWallsActivity extends Activity {
     private static final String TAG = "BrowseWallsActivity";
     private static final String IMAGE_TYPE = "image/*";
     private static final int IMAGE_CROP_AND_SET = 1;
-    private static final String WALLPAPER_LIST_URI = "https://raw.githubusercontent.com/thelazyindian/walls/master/wallpapers/thumbs/json_wallpapers_xml";
-    private static final String WALLPAPER_THUMB_URI = "https://raw.githubusercontent.com/thelazyindian/walls/master/wallpapers/thumbs/";
-    private static final String WALLPAPER_FULL_URI = "https://raw.githubusercontent.com/thelazyindian/walls/master/wallpapers/";
+    private static final String WALLPAPER_LIST_URI = "http://api.bugsbrobugs.tech/wallpapers/thumbs/json_wallpapers_xml";
+    private static final String WALLPAPER_THUMB_URI = "http://api.bugsbrobugs.tech/wallpapers/thumbs/";
+    private static final String WALLPAPER_FULL_URI = "http://api.bugsbrobugs.tech/wallpapers/";
 
     private static final boolean DEBUG = false;
     private List<WallpaperInfo> mWallpaperList;
