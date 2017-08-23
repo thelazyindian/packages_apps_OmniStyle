@@ -491,6 +491,7 @@ public class BrowseWallsActivity extends Activity {
                 }
             }
         } catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
         return urlList;
     }
