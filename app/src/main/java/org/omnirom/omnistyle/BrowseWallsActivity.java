@@ -73,13 +73,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
+import java.net.HttpURLConnection;
 
 public class BrowseWallsActivity extends Activity {
     private static final String TAG = "BrowseWallsActivity";
     private static final String IMAGE_TYPE = "image/*";
     private static final int IMAGE_CROP_AND_SET = 1;
-    private static final String WALLPAPER_LIST_URI = "http://api.bugsbrobugs.tech/wallpapers/thumbs/json_wallpapers_xml";
+    private static final String WALLPAPER_LIST_URI = "http://api.bugsbrobugs.tech/wallpapers/thumbs/json_wallpapers_xml.php";
     private static final String WALLPAPER_THUMB_URI = "http://api.bugsbrobugs.tech/wallpapers/thumbs/";
     private static final String WALLPAPER_FULL_URI = "http://api.bugsbrobugs.tech/wallpapers/";
 
@@ -398,19 +398,19 @@ public class BrowseWallsActivity extends Activity {
         d.show();
     }
 
-    private HttpsURLConnection setupHttpsRequest(String urlStr) {
+    private HttpURLConnection setupHttpRequest(String urlStr) {
         URL url;
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
         try {
             url = new URL(urlStr);
-            urlConnection = (HttpsURLConnection) url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setConnectTimeout(HTTP_CONNECTION_TIMEOUT);
             urlConnection.setReadTimeout(HTTP_READ_TIMEOUT);
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoInput(true);
             urlConnection.connect();
             int code = urlConnection.getResponseCode();
-            if (code != HttpsURLConnection.HTTP_OK) {
+            if (code != HttpURLConnection.HTTP_OK) {
                 Log.d(TAG, "response:" + code);
                 return null;
             }
@@ -424,9 +424,9 @@ public class BrowseWallsActivity extends Activity {
     private String downloadUrlMemoryAsString(String url) {
         if (DEBUG) Log.d(TAG, "download: " + url);
 
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
         try {
-            urlConnection = setupHttpsRequest(url);
+            urlConnection = setupHttpRequest(url);
             if (urlConnection == null) {
                 return null;
             }
@@ -461,6 +461,7 @@ public class BrowseWallsActivity extends Activity {
     private List<RemoteWallpaperInfo> getWallpaperList() {
         String wallData = downloadUrlMemoryAsString(WALLPAPER_LIST_URI);
         if (TextUtils.isEmpty(wallData)) {
+            Log.d(TAG, "Trigger");
             return null;
         }
         List<RemoteWallpaperInfo> urlList = new ArrayList<RemoteWallpaperInfo>();
@@ -469,6 +470,7 @@ public class BrowseWallsActivity extends Activity {
             for (int i = 0; i < walls.length(); i++) {
                 JSONObject build = walls.getJSONObject(i);
                 String fileName = build.getString("filename");
+                Log.d(TAG, "Filename: "+fileName);
                 String creator = null;
                 if (build.has("creator")) {
                     creator = build.getString("creator");
@@ -483,7 +485,9 @@ public class BrowseWallsActivity extends Activity {
                         RemoteWallpaperInfo wi = new RemoteWallpaperInfo();
                         wi.mImage = fileName;
                         wi.mThumbUri = WALLPAPER_THUMB_URI + fileName;
-                        wi.mUri = WALLPAPER_FULL_URI + fileName;
+                        Log.d(TAG, WALLPAPER_THUMB_URI + fileName);
+                        wi.mUri = WALLPAPER_FULL_URI + fileName.substring(0,fileName.indexOf('.')) + ".png";
+                        Log.d(TAG, WALLPAPER_FULL_URI + fileName.substring(0,fileName.indexOf('.')) + ".png");
                         wi.mCreator = creator;
                         wi.mDisplayName = displayName;
                         urlList.add(wi);
@@ -492,6 +496,7 @@ public class BrowseWallsActivity extends Activity {
                 }
             }
         } catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
         return urlList;
     }
@@ -499,13 +504,13 @@ public class BrowseWallsActivity extends Activity {
     private boolean downloadUrlFile(String url, File f) {
         if (DEBUG) Log.d(TAG, "download:" + url);
 
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
 
         if (f.exists())
             f.delete();
 
         try {
-            urlConnection = setupHttpsRequest(url);
+            urlConnection = setupHttpRequest(url);
             if (urlConnection == null) {
                 return false;
             }
