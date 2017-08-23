@@ -482,7 +482,7 @@ public class BrowseWallsActivity extends Activity {
                         RemoteWallpaperInfo wi = new RemoteWallpaperInfo();
                         wi.mImage = fileName;
                         wi.mThumbUri = WALLPAPER_THUMB_URI + fileName;
-                        wi.mUri = WALLPAPER_FULL_URI + fileName;
+                        wi.mUri = WALLPAPER_FULL_URI + fileName.substring(0,fileName.indexOf('.')) + ".png";
                         wi.mCreator = creator;
                         wi.mDisplayName = displayName;
                         urlList.add(wi);
